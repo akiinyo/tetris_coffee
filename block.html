@@ -6,6 +6,7 @@
 
     <script src="http://jashkenas.github.com/coffee-script/extras/coffee-script.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/coffeescript">
+      block = [ [ 1, 1 ], [ 0, 1 ], [ 0, 1 ] ]
       ctx = ->
         elmTarget = document.getElementById("target")
         elmTarget.getContext("2d")
@@ -14,7 +15,13 @@
         ctx().fillStyle = "rgb(255, 0, 0)"
 
       window.paint = ->
-        ctx().fillRect 10, 10, 20, 20
+        y = 0
+        while y < block.length
+          x = 0
+          while x < block[y].length
+            ctx().fillRect x * 20, y * 20, 20, 20  if block[y][x]
+            x++
+          y++
 
       window.clean = ->
         ctx().clearRect 0, 0, 200, 400
