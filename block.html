@@ -6,18 +6,24 @@
 
     <script src="http://jashkenas.github.com/coffee-script/extras/coffee-script.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/coffeescript">
-      root = exports ? this
-
-      root.main = ->
+      ctx = ->
         elmTarget = document.getElementById("target")
-        ctx = elmTarget.getContext("2d")
-        ctx.fillStyle = "rgb(255, 0, 0)"
-        ctx.fillRect 0, 0, 20, 20
+        elmTarget.getContext("2d")
+
+      window.load = ->
+        ctx().fillStyle = "rgb(255, 0, 0)"
+
+      window.paint = ->
+        ctx().fillRect 10, 10, 20, 20
+
+      window.clean = ->
+        ctx().clearRect 0, 0, 200, 400
 
     </script>
   </head>
-  <body>
+  <body onload="load()">
     <canvas id="target" style="border: 5px solid gray" width="200" height="400"></canvas>
-    <input type="button" value="click" onclick="main()" />
+    <input type="button" value="paint" onclick="paint()" />
+    <input type="button" value="clean" onclick="clean()" />
   </body>
 </html>
