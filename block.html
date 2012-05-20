@@ -16,6 +16,7 @@
 
       window.load = ->
         ctx().fillStyle = "rgb(255, 0, 0)"
+        setInterval paint, 200
 
       window.paint = ->
         ctx().clearRect 0, 0, 200, 400
@@ -35,6 +36,5 @@
   </head>
   <body onload="load()">
     <canvas id="target" style="border: 5px solid gray" width="200" height="400"></canvas>
-    <input type="button" value="paint" onclick="paint()" />
   </body>
 </html>
