@@ -18,19 +18,19 @@
         ctx().fillStyle = "rgb(255, 0, 0)"
         setInterval paint, 200
 
-      window.paint = ->
-        ctx().clearRect 0, 0, 200, 400
+      window.paintMatrix = (matrix, offsetx, offsety) ->
         y = 0
-        while y < block.length
+        while y < matrix.length
           x = 0
-          while x < block[y].length
-            ctx().fillRect((x + posx) * 20, (y + posy) * 20, 20, 20) if block[y][x]
+          while x < matrix[y].length
+            ctx().fillRect((x + offsetx) * 20, (y + offsety) * 20, 20, 20) if matrix[y][x]
             x++
           y++
-        posy = posy + 1
 
-      window.clean = ->
+      paint = ->
         ctx().clearRect 0, 0, 200, 400
+        paintMatrix block, posx, posy
+        posy = posy + 1
 
     </script>
   </head>
