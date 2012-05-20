@@ -7,6 +7,9 @@
     <script src="http://jashkenas.github.com/coffee-script/extras/coffee-script.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/coffeescript">
       block = [ [ 1, 1 ], [ 0, 1 ], [ 0, 1 ] ]
+      posx = 0
+      posy = 0
+
       ctx = ->
         elmTarget = document.getElementById("target")
         elmTarget.getContext("2d")
@@ -15,13 +18,15 @@
         ctx().fillStyle = "rgb(255, 0, 0)"
 
       window.paint = ->
+        ctx().clearRect 0, 0, 200, 400
         y = 0
         while y < block.length
           x = 0
           while x < block[y].length
-            ctx().fillRect x * 20, y * 20, 20, 20  if block[y][x]
+            ctx().fillRect((x + posx) * 20, (y + posy) * 20, 20, 20) if block[y][x]
             x++
           y++
+        posy = posy + 1
 
       window.clean = ->
         ctx().clearRect 0, 0, 200, 400
@@ -31,6 +36,5 @@
   <body onload="load()">
     <canvas id="target" style="border: 5px solid gray" width="200" height="400"></canvas>
     <input type="button" value="paint" onclick="paint()" />
-    <input type="button" value="clean" onclick="clean()" />
   </body>
 </html>
