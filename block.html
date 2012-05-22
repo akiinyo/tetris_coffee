@@ -8,8 +8,7 @@
     <script type="text/coffeescript">
       block = [ [ 1, 1 ], [ 0, 1 ], [ 0, 1 ] ]
       [posx, posy] = [0, 0]
-      map = []
-      [mapWidth, mapHeight] = [10, 20]
+      [map, mapWidth, mapHeight] = [[], 10, 20]
 
       ctx = ->
         elmTarget = document.getElementById("target")
@@ -27,6 +26,26 @@
 
         setInterval paint, 200
 
+      check = (map, block, offsetx, offsety) ->
+        return false if offsetx < 0 or offsety < 0 or mapHeight < offsety + block.length or mapWidth < offsetx + block[0].length
+        y = 0
+        while y < block.length
+          x = 0
+          while x < block[y].length
+            return false if block[y][x] and map[y + offsety][x + offsetx]
+            x++
+          y++
+        true
+
+      mergeMatrix = (map, block, offsetx, offsety) ->
+        y = 0
+        while y < mapHeight
+          x = 0
+          while x < mapWidth
+            map[y][x]++ if block[y - offsety] and block[y - offsety][x - offsetx]
+            x++
+          y++
+
       paintMatrix = (matrix, offsetx, offsety, color) ->
         ctx().fillStyle = color;
         y = 0
@@ -41,7 +60,12 @@
         ctx().clearRect 0, 0, 200, 400
         paintMatrix(map, 0, 0, "rgb(128, 128, 128)")
         paintMatrix(block, posx, posy, "rgb(255, 0, 0)")
-        posy = posy + 1
+
+        if check(map, block, posx, posy + 1)
+          posy = posy + 1
+        else
+          mergeMatrix(map, block, posx, posy)
+          [posx, posy] = [0, 0]
 
     </script>
   </head>
