@@ -58,8 +58,8 @@
 
       paint = ->
         ctx().clearRect 0, 0, 200, 400
-        paintMatrix(map, 0, 0, "rgb(128, 128, 128)")
         paintMatrix(block, posx, posy, "rgb(255, 0, 0)")
+        paintMatrix(map, 0, 0, "rgb(128, 128, 128)")
 
         if check(map, block, posx, posy + 1)
           posy = posy + 1
@@ -67,9 +67,28 @@
           mergeMatrix(map, block, posx, posy)
           [posx, posy] = [0, 0]
 
+      window.key = (keyCode) ->
+        switch keyCode
+          when 39
+            return unless check(map, block, posx + 1, posy)
+            posx = posx + 1
+          when 37
+            return unless check(map, block, posx - 1, posy)
+            posx = posx - 1
+          when 40
+            y = posy
+            y++ while check(map, block, posx, y)
+            posy = y - 1
+          else
+            return
+
+        ctx().clearRect 0, 0, 200, 400
+        paintMatrix(block, posx, posy, "rgb(255, 0, 0)")
+        paintMatrix(map, 0, 0, "rgb(128, 128, 128)")
+
     </script>
   </head>
-  <body onload="load()">
+  <body onload="load()" onkeydown="key(event.keyCode)">
     <canvas id="target" style="border: 5px solid gray" width="200" height="400"></canvas>
   </body>
 </html>
