@@ -6,7 +6,8 @@
 
     <script src="http://jashkenas.github.com/coffee-script/extras/coffee-script.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/coffeescript">
-      block = [ [ 1, 1 ], [ 0, 1 ], [ 0, 1 ] ]
+      blocks = [ [ [1, 1], [0, 1], [0, 1] ], [ [1, 1], [1, 0], [1, 0] ], [ [1, 1], [1, 1] ], [ [1, 0], [1, 1], [1, 0] ], [ [1, 0], [1, 1], [0, 1] ], [ [0, 1], [1, 1], [1, 0] ], [ [1], [1], [1], [1] ] ]
+      block = blocks[Math.floor(Math.random() * blocks.length)]
       [posx, posy] = [0, 0]
       [map, mapWidth, mapHeight] = [[], 10, 20]
 
@@ -85,6 +86,7 @@
           mergeMatrix(map, block, posx, posy)
           clearRows(map)
           [posx, posy] = [0, 0]
+          block = blocks[Math.floor(Math.random() * blocks.length)]
 
       window.rotate = (block) ->
         rotated = []
