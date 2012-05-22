@@ -67,8 +67,24 @@
           mergeMatrix(map, block, posx, posy)
           [posx, posy] = [0, 0]
 
+      window.rotate = (block) ->
+        rotated = []
+        x = 0
+        while x < block[0].length
+          rotated[x] = []
+          y = 0
+
+          while y < block.length
+            rotated[x][block.length - y - 1] = block[y][x]
+            y++
+          x++
+        rotated
+
       window.key = (keyCode) ->
         switch keyCode
+          when 38
+            return unless check(map, rotate(block), posx, posy)
+            block = rotate(block)
           when 39
             return unless check(map, block, posx + 1, posy)
             posx = posx + 1
