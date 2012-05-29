@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <title>あきーにょcafe</title>
+
+    <script src="http://jashkenas.github.com/coffee-script/extras/coffee-script.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/coffeescript">
+      Array::each = (fn) ->
+        result = []
+        i = 0
+
+        while i < this.length
+          result[i] = fn(this[i], i)
+          i++
+        result
+
+      Matrix = (matrix) ->
+        @matrix = matrix
+        @height = matrix.length
+        @width = matrix[0].length
+
+      Matrix::each = (fn) ->
+        @matrix.each fn
+
+      Matrix::get = (x, y) ->
+        (@matrix[y] and @matrix[y][x]) or 0
+
+      Matrix::paint = (offsetx, offsety, color) ->
+        ctx().fillStyle = color
+        @matrix.each (row, y) ->
+          row.each (val, x) ->
+            ctx().fillRect((x + offsetx) * 20, (y + offsety) * 20, 20, 20) if val
+
+      Matrix::check = (block, offsetx, offsety) ->
+        return false  if offsetx < 0 or offsety < 0 or @height < offsety + block.height or @width < offsetx + block.width
+        matrix = @matrix
+        ok = true
+        block.each (row, y) ->
+          row.each (val, x) ->
+            ok = false if val and matrix[y + offsety][x + offsetx]
+        ok
+
+      Matrix::merge = (block, offsetx, offsety) ->
+        @matrix.each (row, y) ->
+          row.each (val, x) ->
+            row[x] += block.get(x - offsetx, y - offsety)
+
+      Matrix::clearRows = ->
+        matrix = @matrix
+        width = @width
+        matrix.each (row, y) ->
+          full = true
+          row.each (val, x) ->
+            full = false unless val
+
+          if full
+            matrix.splice y,1
+            matrix.unshift new Array(width).each(->
+              0
+            )
+
+      Matrix::rotate = ->
+        matrix = @matrix
+        new Matrix(new Array(matrix[0].length).each((_, y) ->
+          new Array(matrix.length).each (_, x) ->
+            matrix[matrix.length - x - 1][y]
+        ))
+
+      ctx = ->
+        elmTarget = document.getElementById("target")
+        elmTarget.getContext("2d")
+
+      blocks = [new Matrix([ [ 1, 1 ], [ 0, 1 ], [ 0, 1 ] ]), new Matrix([ [ 1, 1 ], [ 1, 0 ], [ 1, 0 ] ]), new Matrix([ [ 1, 1 ], [ 1, 1 ] ]), new Matrix([ [ 1, 0 ], [ 1, 1 ], [ 1, 0 ] ]), new Matrix([ [ 1, 0 ], [ 1, 1 ], [ 0, 1 ] ]), new Matrix([ [ 0, 1 ], [ 1, 1 ], [ 1, 0 ] ]), new Matrix([ [ 1 ], [ 1 ], [ 1 ], [ 1 ] ]) ]
+      block = blocks[Math.floor(Math.random() * blocks.length)]
+      [posx, posy] = [0, 0]
+      map = new Matrix(new Array(20).each(->
+        new Array(10).each ->
+          0
+        ))
+
+      window.load = ->
+        setInterval ( ->
+          ctx().clearRect 0, 0, 200, 400
+          block.paint posx, posy, "rgb(255, 0, 0)"
+          map.paint 0, 0, "rgb(128, 128, 128)"
+          if map.check(block, posx, posy + 1)
+            posy = posy + 1
+          else
+            map.merge block, posx, posy
+            map.clearRows()
+            [posx, posy] = [0, 0]
+            block = blocks[Math.floor(Math.random() * blocks.length)]
+        ), 200
+
+      window.key = (keyCode) ->
+        switch keyCode
+          when 38
+            return unless map.check(block.rotate(), posx, posy)
+            block = block.rotate(block)
+          when 39
+            return unless map.check(block, posx + 1, posy)
+            posx = posx + 1
+          when 37
+            return unless map.check(block, posx - 1, posy)
+            posx = posx - 1
+          when 40
+            y = posy
+            y++ while map.check(block, posx, y)
+            posy = y - 1
+          else
+            return
+
+        ctx().clearRect 0, 0, 200, 400
+        block.paint posx, posy, "rgb(255, 0, 0)"
+        map.paint 0, 0, "rgb(128, 128, 128)"
+    </script>
+  </head>
+  <body onload="load()" onkeydown="key(event.keyCode)">
+    <canvas id="target" style="border: 5px solid gray" width="200" height="400"></canvas>
+  </body>
+</html>
